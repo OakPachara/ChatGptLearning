@@ -1,0 +1,88 @@
+In Vue 3, the `defineProps` macro is a feature introduced with the Composition API to define component props in a more streamlined way, especially when using `<script setup>`. The line `defineProps({ content: String });` is using this macro to declare that the component expects to receive a prop named `content` of type `String`.
+
+Here's a breakdown of its function:
+
+- `defineProps`: This is a compiler macro provided by Vue for use within the `<script setup>` context. Its purpose is to define the props that your component will accept.
+
+- `{ content: String }`: This object is the definition of the expected props. It declares a prop named `content` and specifies that its expected data type is `String`.
+
+In a typical Vue component, you would define props using the `props` option in the options API, like this:
+
+```javascript
+export default {
+  props: {
+    content: {
+      type: String
+    }
+  }
+}
+```
+
+
+
+Using `<script setup>` and `defineProps`, it becomes more concise:
+
+```vue
+<script setup>
+const props = defineProps({
+  content: String
+});
+</script>
+```
+
+However, you don't actually need to assign `defineProps` to a variable unless you intend to use it within the `<script setup>`. If you simply want to declare props without further manipulation, you can use it as a standalone statement:
+
+```csharp
+using System;
+
+namespace HelloWorldApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string name = "Oak";
+            Console.WriteLine($"Hello, {name}!");
+        }
+    }
+}
+```
+
+However, you don't actually need to assign `defineProps` to a variable unless you intend to use it within the `<script setup>`. If you simply want to declare props without further manipulation, you can use it as a standalone statement:
+
+---
+
+```typescript 
+<script setup>
+defineProps({
+  content: String
+});
+</script>
+```
+
+This approach seamlessly integrates with TypeScript, provides better type inference, and aligns with the ergonomic improvements aimed with `<script setup>`.
+
+
+It will render well but without Vue-specific highlights (e.g. for `<template>`, `ref`, etc.).
+
+---
+
+### ✅ 3. **Other Option: Use `prismjs` for better SFC support**
+
+If Vue highlighting is essential, consider using [`prismjs`](https://prismjs.com/), which has better community-maintained SFC support, or libraries like:
+
+- [`shiki`](https://github.com/shikijs/shiki) (used by VitePress, super accurate)
+- [`vue-highlight.js`](https://github.com/metachris/vue-highlightjs) (Vue plugin for highlight.js)
+
+---
+
+### Summary
+
+| Option             | Vue SFC Support | Performance | Notes |
+|--------------------|-----------------|-------------|-------|
+| Manually register `vue` | ✅ Good         | ✅ Fast       | Works with Highlight.js core |
+| Use `html` block    | ⚠️ Basic        | ✅ Fast       | Not Vue-aware |
+| Use `prismjs`       | ✅ Great        | ⚠️ Larger     | More detailed, heavier |
+| Use `shiki`         | ✅ Excellent    | ⚠️ Heavier    | VS Code-level accuracy |
+
+Let me know which approach you'd prefer — I can help you wire it up.

@@ -1,0 +1,61 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - Backend/** 
+
+resources:
+- repo: self
+
+variables:
+  azureSubscriptionServiceConnection: 'ad61839e-bacc-492f-b3b0-8749eaec523f'
+  webAppName: 'sea-oak-chatgpt-api'
+  vmImageName: 'windows-latest'
+  buildConfiguration: 'Release'
+
+stages:
+- stage: Build
+  displayName: Build and Deploy Stage
+  jobs:
+  - job: BuildAndDeploy
+    displayName: Build and Deploy Job
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET Core SDK'
+      inputs:
+        version: 8.x
+        performMultiLevelLookup: true
+        includePreviewVersions: false # Required for preview versions
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet packages'
+      inputs:
+        command: 'restore'
+        projects: 'Backend/ChatGpt.csproj' # adjust if your .csproj name/folder is different
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: 'Backend/ChatGpt.csproj'
+        arguments: '--configuration $(buildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: 'Backend/ChatGpt.csproj'
+        arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: true
+
+    - task: AzureWebApp@1
+      displayName: 'Deploy to Azure Web App'
+      inputs:
+        azureSubscription: $(azureSubscriptionServiceConnection)
+        appName: $(webAppName)
+        package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
